@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Previsão do Tempo</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            padding: 50px;
+        }
+
+        input, button {
+            padding: 10px;
+            font-size: 16px;
+        }
+
+        #resultado {
+            margin-top: 20px;
+            font-size: 18px;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Previsão do Tempo</h1>
+
+    <input type="text" id="cidade" placeholder="Escreve a cidade">
+    <button onclick="buscarTempo()">Pesquisar</button>
+
+    <div id="resultado"></div>
+
+    <script>
+        const API_KEY = "d518c84a359ac1c865588841b87b583e";
+
+        async function buscarTempo() {
+            const cidade = document.getElementById("cidade").value;
+            const resultado = document.getElementById("resultado");
+
+            if (cidade === "") {
+                resultado.innerHTML = "Por favor, escreve o nome de uma cidade.";
+                return;
+            }
+
+            const url = `https://api.openweathermap.org/data/2.5/weather?q=${cidade}&appid=${API_KEY}&lang=pt&units=metric`;
+
+            try {
+                const resposta = await fetch(url);
+
+                if (!resposta.ok) {
+                    throw new Error("Cidade não encontrada");
+                }
+
+                const dados = await resposta.json();
+
+                resultado.innerHTML = `
+                    <h2>${dados.name}, ${dados.sys.country}</h2>
+                    <p>Temperatura: ${dados.main.temp} °C</p>
+                    <p>Clima: ${dados.weather[0].description}</p>
+                    <p>Humidade: ${dados.main.humidity}%</p>
+                `;
+            } catch (erro) {
+                resultado.innerHTML = "Erro ao obter dados do tempo.";
+            }
+        }
+    </script>
+
+</body>
+</html>
